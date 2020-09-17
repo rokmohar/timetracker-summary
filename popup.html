@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>TimeTracker Summary</title>
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="bootstrap.min.js"></script>
+<script type="text/javascript" src="moment.min.js"></script>
+
+<link rel="stylesheet" href="bootstrap.min.css">
+
+<script type="text/javascript" src="popup.js"></script>
+
+<style>
+body {
+  min-width: 600px;
+}
+.container {
+  margin: 20px 0;
+}
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+	<h1>TimeTracker Summary</h1>
+	
+	<div id="domain-msg">
+		Extension cannot be used on this domain.
+	</div>
+
+	<form id="export-form" class="hidden">
+		<div class="form-group">
+			<label for="jwt">JWT</label>
+			<input type="text" id="jwt" class="form-control">
+		</div>
+
+		<div class="form-group">
+			<label for="from-date">From Date</label>
+			<input type="date" id="from-date" class="form-control" placeholder="example: 2020-01-01">
+		</div>
+
+		<div class="form-group">
+			<label for="until-date">Until Date</label>
+			<input type="date" id="until-date" class="form-control" placeholder="example: 2020-01-31">
+		</div>
+
+		<div class="form-group clearfix">
+			<button type="submit" class="btn btn-primary float-right">
+				Load Data
+			</button>
+		</div>
+	</form>
+
+	<div id="show-summary" class="hidden">
+		<hr>
+		
+		<div>
+			<h2>
+				Total:
+				<span id="total-sum"></span>
+			</h2>
+		</div>
+		
+		<hr>
+
+		<div>
+			<h2>By Project:</h2>
+			<ul id="total-listing"></ul>
+		</div>
+		
+		<hr>
+
+		<div>
+			<h2>By Date And Project:</h2>
+			<ul id="byDate-listing"></ul>
+		</div>
+	</div>
+</div>
+</body>
+</html>
