@@ -17,7 +17,7 @@ function fetchTimeRecords(jwt, fromDate, untilDate) {
 	)
 	.then(async (response) => {
 		if (response.status != 200) {
-			throw new Error("Response does not have expected status code.");
+			throw new Error("Response does not have the expected status code.");
 		}
 		return response.json();
 	})
@@ -112,9 +112,46 @@ function submitForm(event) {
 				$listingItem.append($byProjectListing);
 			});
 		})
-		.catch((error) => alert("Failed to export TimeTracker.", error));
+		.catch(() => alert("Failed to export TimeTracker. Try to refresh JWT."));
 
 	return false;
+}
+
+function loadJwtFromStorage(cb) {
+	chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+		chrome.tabs.executeScript(tabs[0].id, { code: `localStorage.getItem('easy.bi_token')` }, function(response) {
+			try {
+				cb(JSON.parse(response[0]));
+			} catch (error) {
+				alert("Failed to load tokens from storage.");
+			}
+		});
+	});
+}
+
+function saveJwtToStorage(tokens) {
+	chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+		chrome.tabs.executeScript(tabs[0].id, {code: `localStorage.setItem('easy.bi_token', '${JSON.stringify(tokens)}')`}, function (response) {
+			$("#jwt").val(tokens.authToken);
+		});
+	});
+}
+
+function refreshJwt() {
+	loadJwtFromStorage(function(tokens) {
+		return fetch(
+			'https://my.easy.bi/loginapi/v1/loginReset',
+			{ method: 'POST', headers: { 'Content-type': 'application/json' }, body: JSON.stringify({ jwt: tokens.authToken, resetToken: tokens.resetToken }) }
+		).then((response) => {
+			if (response.status != 200) {
+				throw new Error("Response does not have the expected status code.");
+			}
+			return response.json();
+		}).then((newTokens) => {
+			console.log("New Tokens:", newTokens);
+			saveJwtToStorage(newTokens);
+		}).catch(() => alert("Failed to refresh JWT. Are you logged in?"));
+	});
 }
 
 $(document).ready(function() {
@@ -122,26 +159,23 @@ $(document).ready(function() {
 		if (!tabs[0].url.startsWith("https://my.easy.bi")) {
 			return;
 		}
-		
+
 		const $fromDate = $("#from-date");
 		const $untilDate = $("#until-date");
 		const $domainMsg = $("#domain-msg");
 		const $exportForm = $("#export-form");
+		const $refreshBtn = $("#refresh-btn");
 		
 		$fromDate.val(moment().startOf("month").format("YYYY-MM-DD"));
 		$untilDate.val(moment().endOf("month").format("YYYY-MM-DD"));
 		$exportForm.on("submit", submitForm);
+		$refreshBtn.on("click", refreshJwt);
 		
 		$domainMsg.hide();
 		$exportForm.show();
 
-		chrome.tabs.executeScript(tabs[0].id, { code: `localStorage.getItem('easy.bi_token')` }, function(response) {
-			try {
-				const tokens = JSON.parse(response[0]);
-				$("#jwt").val(tokens.authToken);
-			} catch (error) {
-				alert("Failed to load tokens from storage.");
-			}
+		loadJwtFromStorage(function (tokens) {
+			$("#jwt").val(tokens.authToken);
 		});
 	});
 });

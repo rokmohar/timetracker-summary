@@ -1,32 +1,34 @@
 <html>
 <head>
-<title>TimeTracker Summary</title>
+	<title>TimeTracker Summary</title>
 
-<script type="text/javascript" src="jquery.min.js"></script>
-<script type="text/javascript" src="bootstrap.min.js"></script>
-<script type="text/javascript" src="moment.min.js"></script>
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="bootstrap.min.js"></script>
+	<script type="text/javascript" src="moment.min.js"></script>
 
-<link rel="stylesheet" href="bootstrap.min.css">
+	<link rel="stylesheet" href="bootstrap.min.css">
 
-<script type="text/javascript" src="popup.js"></script>
+	<script type="text/javascript" src="popup.js"></script>
 
-<style>
-body {
-  min-width: 600px;
-}
-.container {
-  margin: 20px 0;
-}
-.hidden {
-  display: none;
-}
-</style>
+	<style>
+		body {
+			min-width: 600px;
+		}
+
+		.container {
+			margin: 20px 0;
+		}
+
+		.hidden {
+			display: none;
+		}
+	</style>
 </head>
 
 <body>
 <div class="container">
 	<h1>TimeTracker Summary</h1>
-	
+
 	<div id="domain-msg">
 		Extension cannot be used on this domain.
 	</div>
@@ -34,7 +36,14 @@ body {
 	<form id="export-form" class="hidden">
 		<div class="form-group">
 			<label for="jwt">JWT</label>
-			<input type="text" id="jwt" class="form-control">
+			<div class="input-group">
+				<input type="text" id="jwt" class="form-control">
+				<div class="input-group-append">
+					<button id="refresh-btn" type="button" class="btn btn-outline-secondary">
+						Refresh
+					</button>
+				</div>
+			</div>
 		</div>
 
 		<div class="form-group">
@@ -56,21 +65,21 @@ body {
 
 	<div id="show-summary" class="hidden">
 		<hr>
-		
+
 		<div>
 			<h2>
 				Total:
 				<span id="total-sum"></span>
 			</h2>
 		</div>
-		
+
 		<hr>
 
 		<div>
 			<h2>By Project:</h2>
 			<ul id="total-listing"></ul>
 		</div>
-		
+
 		<hr>
 
 		<div>
